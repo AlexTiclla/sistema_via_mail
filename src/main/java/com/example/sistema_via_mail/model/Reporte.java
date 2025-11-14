@@ -1,9 +1,19 @@
 package com.example.sistema_via_mail.model;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 
 /**
  * Entidad Reporte
@@ -31,6 +41,10 @@ public class Reporte {
 
     @Column(name = "resultado", columnDefinition = "TEXT")
     private String resultado; // JSON con resultado del reporte
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario_generador")
+    private Usuario usuarioGenerador;
 
     @Column(name = "fecha_generacion")
     private LocalDateTime fechaGeneracion;
@@ -94,6 +108,14 @@ public class Reporte {
 
     public void setFechaGeneracion(LocalDateTime fechaGeneracion) {
         this.fechaGeneracion = fechaGeneracion;
+    }
+
+    public Usuario getUsuarioGenerador() {
+        return usuarioGenerador;
+    }
+
+    public void setUsuarioGenerador(Usuario usuarioGenerador) {
+        this.usuarioGenerador = usuarioGenerador;
     }
 
     @PrePersist

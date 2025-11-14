@@ -107,10 +107,10 @@ INSERT INTO pago (id_venta, numero_cuota, monto_cuota, fecha_pago, metodo_pago, 
 -- ============================================
 -- INSERTAR REPORTES (Ejemplos)
 -- ============================================
-INSERT INTO reporte (tipo_reporte, descripcion, parametros, resultado) VALUES
-('VENTAS_DIA', 'Reporte de ventas del dia 13/11/2025', '{"fecha":"2025-11-13"}', '{"total_ventas":10,"monto_total":395.00}'),
-('BOLETOS_VENDIDOS', 'Boletos vendidos para el 20/11/2025', '{"fecha":"2025-11-20"}', '{"total_boletos":3,"ruta":"Santa Cruz - Comarapa"}'),
-('ENCOMIENDAS_TRANSITO', 'Encomiendas en transito', '{"estado":"EN_TRANSITO"}', '{"total":2}');
+INSERT INTO reporte (tipo_reporte, descripcion, parametros, resultado, id_usuario_generador) VALUES
+('VENTAS_DIA', 'Reporte de ventas del dia 13/11/2025', '{"fecha":"2025-11-13"}', '{"total_ventas":10,"monto_total":395.00}', 1),
+('BOLETOS_VENDIDOS', 'Boletos vendidos para el 20/11/2025', '{"fecha":"2025-11-20"}', '{"total_boletos":3,"ruta":"Santa Cruz - Comarapa"}', 1),
+('ENCOMIENDAS_TRANSITO', 'Encomiendas en transito', '{"estado":"EN_TRANSITO"}', '{"total":2}', 3);
 
 -- ============================================
 -- VERIFICACION DE DATOS INSERTADOS
