@@ -188,12 +188,14 @@ CREATE TABLE reporte (
     descripcion TEXT,
     parametros TEXT,
     resultado TEXT,
+    id_usuario_generador INTEGER REFERENCES usuario(id_usuario),
     fecha_generacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Índices para optimizar búsquedas
 CREATE INDEX idx_reporte_tipo ON reporte(tipo_reporte);
 CREATE INDEX idx_reporte_fecha ON reporte(fecha_generacion);
+CREATE INDEX idx_reporte_usuario ON reporte(id_usuario_generador);
 
 -- ============================================
 -- COMENTARIOS EN LAS TABLAS
