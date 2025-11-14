@@ -47,6 +47,17 @@ public class CommandParserService {
         
         String cleanSubject = subject.trim();
         
+        // Verificar si es el comando HELP especial
+        if (cleanSubject.equalsIgnoreCase("HELP") || cleanSubject.equalsIgnoreCase("AYUDA")) {
+            logger.debug("Comando HELP detectado");
+            CommandRequest request = new CommandRequest();
+            request.setOperation("HLP");
+            request.setEntity("SYS");
+            request.setParameters(new ArrayList<>());
+            request.setSenderEmail(senderEmail);
+            return request;
+        }
+        
         // Aplicar patrón regex
         Matcher matcher = COMMAND_PATTERN.matcher(cleanSubject);
         

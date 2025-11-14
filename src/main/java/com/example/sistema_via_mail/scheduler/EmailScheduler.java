@@ -58,6 +58,7 @@ public class EmailScheduler {
         logger.info("===============================================");
         logger.info("Iniciando revisión de correos #{}", executionCount);
         logger.info("Fecha/Hora: {}", currentTime);
+        logger.info("Mensajes procesados en caché: {}", emailService.getProcessedCacheSize());
         logger.info("===============================================");
 
         try {
@@ -92,10 +93,16 @@ public class EmailScheduler {
         String senderEmail = extractEmail(message.getFrom());
         String subject = message.getSubject();
         
+        // Limpiar el asunto si tiene prefijos como "Asunto: " o "Subject: "
+        if (subject != null) {
+            subject = subject.replaceFirst("^(Asunto:|Subject:)\\s*", "").trim();
+        }
+        
         try {
             logger.info("Procesando mensaje:");
             logger.info("  - De: {}", message.getFrom());
-            logger.info("  - Asunto: {}", subject);
+            logger.info("  - Asunto original: {}", message.getSubject());
+            logger.info("  - Asunto limpio: {}", subject);
             logger.info("  - Fecha: {}", message.getReceivedDate());
 
             // Parsear comando
@@ -111,12 +118,17 @@ public class EmailScheduler {
             
             // Enviar respuesta
             if (senderEmail != null) {
-                emailService.sendResponse(
-                    senderEmail,
-                    "RE: " + subject + " - " + commandResponse.getStatus(),
-                    responseBody
-                );
-                logger.info("Respuesta enviada correctamente a: {}", senderEmail);
+                try {
+                    emailService.sendResponse(
+                        senderEmail,
+                        "RE: " + subject + " - " + commandResponse.getStatus(),
+                        responseBody
+                    );
+                    logger.info("✓ Respuesta enviada correctamente a: {}", senderEmail);
+                } catch (Exception emailError) {
+                    logger.error("✗ ERROR: No se pudo enviar la respuesta a: {}", senderEmail);
+                    logger.error("Causa: {}", emailError.getMessage());
+                }
             }
 
         } catch (Exception e) {

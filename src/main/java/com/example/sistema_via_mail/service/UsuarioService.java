@@ -61,6 +61,7 @@ public class UsuarioService {
      * LISUSU - Listar usuarios
      * Formatos:
      * - LISUSU["*"] - Todos los usuarios
+     * - LISUSU["1"] - Por ID de usuario
      * - LISUSU["1234567"] - Por CI
      * - LISUSU["CONDUCTOR"] - Por tipo
      */
@@ -76,10 +77,26 @@ public class UsuarioService {
             logger.info("Listando todos los usuarios. Total: {}", usuarios.size());
             
         } else if (criterio.matches("\\d+")) {
-            // Buscar por CI
-            Optional<Usuario> usuario = usuarioRepository.findByCi(criterio);
-            usuarios = usuario.map(List::of).orElse(new ArrayList<>());
-            logger.info("Buscando usuario por CI: {}. Encontrado: {}", criterio, usuario.isPresent());
+            // Es un número - buscar primero por ID, luego por CI
+            try {
+                Long id = Long.parseLong(criterio);
+                Optional<Usuario> usuarioPorId = usuarioRepository.findById(id);
+                
+                if (usuarioPorId.isPresent()) {
+                    usuarios = List.of(usuarioPorId.get());
+                    logger.info("Usuario encontrado por ID: {}", id);
+                } else {
+                    // Si no se encuentra por ID, buscar por CI
+                    Optional<Usuario> usuarioPorCi = usuarioRepository.findByCi(criterio);
+                    usuarios = usuarioPorCi.map(List::of).orElse(new ArrayList<>());
+                    logger.info("Buscando usuario por CI: {}. Encontrado: {}", criterio, usuarioPorCi.isPresent());
+                }
+            } catch (NumberFormatException e) {
+                // Si el número es muy grande para Long, buscar solo por CI
+                Optional<Usuario> usuario = usuarioRepository.findByCi(criterio);
+                usuarios = usuario.map(List::of).orElse(new ArrayList<>());
+                logger.info("Buscando usuario por CI: {}. Encontrado: {}", criterio, usuario.isPresent());
+            }
             
         } else {
             // Buscar por tipo
